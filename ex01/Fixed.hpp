@@ -22,8 +22,12 @@ class Fixed {
         ~Fixed();
         Fixed(const Fixed &);
         Fixed &operator=(const Fixed &);
+        Fixed(const int n);
+        Fixed(const float f);
         int getRawBits(void) const;
         void setRawBits(int const raw);
+        float toFloat(void) const;
+        int toInt(void) const;
 };
 
 #endif

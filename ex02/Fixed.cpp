@@ -3,32 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   Fixed.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kaisuzuk <kaisuzuk@student.42.fr>          #+#  +:+       +#+        */
+/*   By: kaisuzuk <kaisuzuk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-12-24 05:14:19 by kaisuzuk          #+#    #+#             */
-/*   Updated: 2025-12-24 05:14:19 by kaisuzuk         ###   ########.fr       */
+/*   Created: 2025/12/24 05:14:19 by kaisuzuk          #+#    #+#             */
+/*   Updated: 2025/12/25 14:42:21 by kaisuzuk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Fixed.hpp"
-#include <iostream>
 #include <cmath>
 
-Fixed::Fixed(): rawBits(0) {
-    std::cout << "Default constructor called" << std::endl;
-}
+Fixed::Fixed(): rawBits(0) {}
 
-Fixed::~Fixed() {
-    std::cout << "Destructor called" << std::endl;
-}
+Fixed::~Fixed() {}
 
 Fixed::Fixed(const Fixed &inst) {
-    std::cout << "Copy constructor called" << std::endl;
     *this = inst;
 }
 
 Fixed &Fixed::operator=(const Fixed &rhs) {
-    std::cout << "Copy assignment operator called" << std::endl;
     if (this != &rhs) {
         this->rawBits = rhs.getRawBits();
     }
@@ -41,6 +34,111 @@ Fixed::Fixed(const int n) {
 
 Fixed::Fixed(const float f) {
     this->rawBits = static_cast<int>(roundf(f * (1 << fractionalBits)));
+}
+
+bool Fixed::operator>(const Fixed &rhs) const {
+    return (this->getRawBits() > rhs.getRawBits());
+}
+
+bool Fixed::operator<(const Fixed &rhs) const {
+    return (this->getRawBits() < rhs.getRawBits());
+}
+
+bool Fixed::operator>=(const Fixed &rhs) const {
+    return (this->getRawBits() >= rhs.getRawBits());
+}
+
+bool Fixed::operator<=(const Fixed &rhs) const {
+    return (this->getRawBits() <= rhs.getRawBits());
+}
+
+bool Fixed::operator==(const Fixed &rhs) const {
+    return (this->getRawBits() == rhs.getRawBits());
+}
+
+bool Fixed::operator!=(const Fixed &rhs) const {
+    return (this->getRawBits() != rhs.getRawBits());
+}
+
+Fixed Fixed::operator+(const Fixed &rhs) const {
+    Fixed tmp;
+    
+    tmp.setRawBits(this->getRawBits() + rhs.getRawBits());
+    return (tmp);
+}
+
+Fixed Fixed::operator-(const Fixed &rhs) const {
+    Fixed tmp;
+    
+    tmp.setRawBits(this->getRawBits() - rhs.getRawBits());
+    return (tmp);
+}
+
+Fixed Fixed::operator*(const Fixed &rhs) const {
+    Fixed tmp;
+    long long a;
+    long long b;
+
+    a = this->getRawBits();
+    b = rhs.getRawBits();
+    tmp.setRawBits(static_cast<int>((a * b) >> fractionalBits));
+    return (tmp);
+}
+
+Fixed Fixed::operator/(const Fixed &rhs) const {
+    Fixed tmp; 
+    long long a;
+    long long b;
+
+    a = this->getRawBits();
+    b = rhs.getRawBits();
+    if (b == 0)
+    {
+        tmp.setRawBits(0);
+        return (tmp);
+    }
+    tmp.setRawBits((a << this->fractionalBits) / b);
+    return (tmp);
+}
+
+Fixed &Fixed::operator++() {
+    this->setRawBits(this->getRawBits() + 1);
+    return (*this);
+}
+
+Fixed Fixed::operator++(int) {
+    Fixed tmp (*this);
+
+    this->setRawBits(this->getRawBits() + 1);
+    return (tmp);
+}
+
+Fixed &Fixed::operator--() {
+    this->setRawBits(this->getRawBits() - 1);
+    return (*this);
+}
+
+Fixed Fixed::operator--(int) {
+    Fixed tmp(*this);
+
+    this->setRawBits(this->getRawBits() - 1);
+    return (tmp);
+}
+
+Fixed &Fixed::min(Fixed &a, Fixed &b) {
+    return (a > b ? b : a);
+}
+
+const Fixed &Fixed::min(const Fixed &a, const Fixed &b) {
+    return (a > b ? b : a);
+}
+
+Fixed &Fixed::max(Fixed &a, Fixed &b) {
+    return (a > b ? a : b);
+}
+
+const Fixed &Fixed::max(const Fixed &a, const Fixed &b) {
+    return (a > b ? a : b);
 }
 
 int Fixed::getRawBits() const {

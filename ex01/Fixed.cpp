@@ -12,6 +12,7 @@
 
 #include "Fixed.hpp"
 #include <iostream>
+#include <cmath>
 
 Fixed::Fixed(): rawBits(0) {
     std::cout << "Default constructor called" << std::endl;
@@ -34,11 +35,31 @@ Fixed &Fixed::operator=(const Fixed &rhs) {
     return (*this);
 }
 
+Fixed::Fixed(const int n) {
+    this->rawBits = n << fractionalBits;
+}
+
+Fixed::Fixed(const float f) {
+    this->rawBits = static_cast<int>(roundf(f * (1 << fractionalBits)));
+}
+
 int Fixed::getRawBits() const {
-    std::cout << "getRawBits member function called" << std::endl;
     return (this->rawBits);
 }
 
 void Fixed::setRawBits(int const raw) {
     this->rawBits = raw;
+}
+
+int Fixed::toInt() const {
+    return (this->getRawBits() >> this->fractionalBits);
+}
+
+float Fixed::toFloat() const {
+    return (static_cast<float>(this->getRawBits()) / (1 << this->fractionalBits));
+}
+
+std::ostream &operator<<(std::ostream &os, const Fixed &f) {
+    os << f.toFloat();
+    return (os);
 }
